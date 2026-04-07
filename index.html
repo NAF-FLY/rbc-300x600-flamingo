@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=300, height=600, initial-scale=1.0" />
+  <meta name="ad.size" content="width=300,height=600" />
+  <script type="text/javascript" src="https://ds.serving-sys.ru/BurstingScript/EBLoader.js"></script>
+  <title>HTML5 Banner</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 300px;
+      height: 600px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .banner {
+      display: block;
+      position: relative;
+      width: 300px;
+      height: 600px;
+      overflow: hidden;
+      background: #000;
+      cursor: pointer;
+    }
+
+    .layer {
+      position: absolute;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    .bg {
+      left: 0;
+      top: 0;
+      width: 300px;
+      height: 600px;
+      z-index: 0;
+    }
+
+    .bottom-fade {
+      left: 0;
+      bottom: 0;
+      width: 300px;
+      height: 210px;
+      z-index: 3;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .24) 40%, rgba(0, 0, 0, .68) 100%);
+    }
+
+    .corner-logo {
+      right: 23px;
+      bottom: 37px;
+      width: 79px;
+      height: 58px;
+      z-index: 4;
+      opacity: 1;
+      will-change: opacity;
+      animation: cornerLogoFade .35s ease-out 1.05s forwards;
+    }
+
+    .final-fade {
+      inset: 0;
+      z-index: 10;
+      background: #000;
+      opacity: 0;
+      animation: finalFade .5s ease-out 9s forwards;
+    }
+
+    .final-screen {
+      inset: 0;
+      z-index: 11;
+      opacity: 0;
+      animation: finalScreenReveal .01s linear 9.6s forwards;
+    }
+
+    .final-screen-logo {
+      left: 50%;
+      top: 248px;
+      width: 135.82px;
+      height: 100.01px;
+      min-width: 135.82px;
+      max-width: 135.82px;
+      min-height: 100.01px;
+      max-height: 100.01px;
+      transform: translate3d(-50%, 18px, 0);
+      opacity: 0;
+      animation: finalScreenLogo 1.7s cubic-bezier(.22, .72, .2, 1) 9.6s forwards;
+    }
+
+    .final-screen-copy {
+      left: 50%;
+      bottom: 42px;
+      width: 252px;
+      transform: translateX(-50%);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      line-height: 1.1;
+      font-weight: 400;
+      text-align: center;
+      color: #fff;
+      opacity: 0;
+      animation: finalScreenText .75s ease-out 10.3s forwards;
+    }
+
+    .flamingo {
+      left: -228px;
+      top: 0;
+      width: 735px;
+      height: 730px;
+      z-index: 7;
+      display: block;
+      transform-style: preserve-3d;
+      transform: translate3d(-7px, 347px, 0) scale3d(2, 2, 1);
+      transform-origin: center center;
+      will-change: transform;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      contain: paint;
+      animation: flamingoAnim 7.2s forwards;
+    }
+
+    .offer-card,
+    .bottom-panel-glow,
+    .cta-button,
+    .disclaimer {
+      position: absolute;
+      z-index: 5;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #fff;
+    }
+
+    .bottom-panel-glow {
+      left: 0;
+      bottom: 0;
+      width: 300px;
+      height: 118px;
+      background: linear-gradient(180deg, rgba(111, 116, 126, 0) 0%, rgba(111, 116, 126, .9) 100%);
+      opacity: 0;
+      z-index: 4;
+      transform: translate3d(0, 48px, 0);
+      animation: bottomPanelGlowReveal 1s cubic-bezier(.2, .8, .2, 1) 2s forwards;
+    }
+
+    .offer-card {
+      left: 50%;
+      top: 6px;
+      bottom: auto;
+      width: 288px;
+      height: 216px;
+      margin-left: -144px;
+      padding: 13px;
+      border-radius: 16px;
+      overflow: hidden;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .offer-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: #000;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .22);
+      clip-path: inset(100% 0 0 0 round 16px);
+      animation: cardReveal .9s cubic-bezier(.33, 1, .68, 1) 2s forwards;
+    }
+
+    .offer-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .offer-title {
+      margin: 0;
+      width: 258px;
+      height: 63px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .title-row {
+      position: relative;
+      left: 0;
+      width: 258px;
+      overflow: hidden;
+    }
+
+    .title-row.row-1 {
+      height: 26px;
+    }
+
+    .title-row.row-2 {
+      height: 34px;
+    }
+
+    .title-face {
+      position: absolute;
+      inset: 0;
+      display: block;
+      transform-origin: 50% 0%;
+    }
+
+    .title-face img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: block;
+      width: auto;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .title-row.row-1 .title-face img {
+      height: 26px;
+    }
+
+    .title-row.row-1 .title-face.next img {
+      height: 34px;
+    }
+
+    .title-row.row-2 .title-face.current img {
+      height: 26px;
+      top: 5px;
+    }
+
+    .title-row.row-2 .title-face.next img {
+      height: 34px;
+    }
+
+    .title-face.current {
+      opacity: 0;
+      transform: translate3d(0, -8%, 0) scale3d(1, 0, 1);
+      animation:
+        titleCurrentEnter 1.28s cubic-bezier(.22, .61, .36, 1) forwards,
+        titleCurrentFlip .98s cubic-bezier(.22, .61, .36, 1) forwards;
+    }
+
+    .title-face.next {
+      opacity: 0;
+      transform: translate3d(0, -8%, 0) scale3d(1, 0, 1);
+      animation: titleNextFlip .82s cubic-bezier(.22, .61, .36, 1) forwards;
+    }
+
+    .title-row.row-1 .title-face.current {
+      animation-delay: 2.55s, 6s;
+    }
+
+    .title-row.row-2 .title-face.current {
+      animation-delay: 2.67s, 6s;
+    }
+
+    .title-row.row-1 .title-face.next {
+      animation-delay: 6s;
+    }
+
+    .title-row.row-2 .title-face.next {
+      animation-delay: 6s;
+    }
+
+    .offer-bottom {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+
+    .t2-logo {
+      display: block;
+      width: 87.56px;
+      height: 64.48;
+      align-self: flex-end;
+      opacity: 0;
+      transform: translate3d(0, 24px, 0) scale(.92);
+      transform-origin: 50% 100%;
+      animation: logoReveal .82s cubic-bezier(.2, .8, .2, 1) 2.84s forwards;
+    }
+
+    .t2-logo:not([src]),
+    .final-screen-logo:not([src]) {
+      visibility: hidden;
+    }
+
+    .cta-button {
+      z-index: 8;
+      left: 50%;
+      bottom: 22px;
+      width: 288px;
+      height: 81px;
+      margin-left: -144px;
+      border: 0;
+      border-radius: 100px;
+      color: #fff;
+      font-size: 20px;
+      line-height: 82px;
+      font-weight: 900;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      overflow: hidden;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .cta-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 100px;
+      background: #FF3495;
+      clip-path: inset(100% 0 0 0 round 100px);
+      animation: buttonReveal .8s cubic-bezier(.22, .7, .2, 1) 6s forwards;
+    }
+
+    .cta-button-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      clip-path: inset(100% 0 0 0 round 100px);
+      animation: buttonReveal .8s cubic-bezier(.22, .7, .2, 1) 6s forwards;
+    }
+
+    .cta-button img {
+      display: block;
+      width: 147px;
+      height: 17px;
+    }
+
+    .disclaimer {
+      left: 50%;
+      bottom: 7px;
+      z-index: 9;
+      width: 100%;
+      font-weight: 400;
+      font-size: 8.5px;
+      line-height: 110%;
+      color: #ffffff;
+      text-align: center;
+      transform: translateX(-50%);
+    }
+
+    @keyframes flamingoAnim {
+      0% {
+        transform: translate3d(-7px, 347px, 0) scale3d(2, 2, 1);
+        animation-timing-function: cubic-bezier(.3, 0, .7, 1);
+      }
+
+      13.9% {
+        transform: translate3d(-5px, 324px, 0) scale3d(1.875, 1.875, 1);
+        animation-timing-function: cubic-bezier(.16, .68, .16, 1);
+      }
+
+      100% {
+        transform: translate3d(1px, 175px, 0) scale3d(1, 1, 1);
+      }
+    }
+
+    @keyframes cardReveal {
+      from {
+        clip-path: inset(0 0 100% 0 round 16px);
+      }
+      to {
+        clip-path: inset(0 0 0 0 round 16px);
+      }
+    }
+
+    @keyframes cardLift {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        transform: translate3d(0, -82px, 0);
+      }
+    }
+
+    @keyframes bottomPanelGlowReveal {
+      from {
+        transform: translate3d(0, 48px, 0);
+        opacity: 0;
+      }
+      to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes buttonReveal {
+      from {
+        clip-path: inset(100% 0 0 0 round 100px);
+      }
+      to {
+        clip-path: inset(0 0 0 0 round 100px);
+      }
+    }
+
+    @keyframes logoReveal {
+      from {
+        transform: translate3d(0, 24px, 0) scale(.92);
+        opacity: 0;
+      }
+      to {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes titleCurrentEnter {
+      0% {
+        transform: translate3d(0, -8%, 0) scale3d(1, 0, 1);
+        opacity: 0;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes titleCurrentFlip {
+      0% {
+        transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 8%, 0) scale3d(1, 0, 1);
+        opacity: 0;
+      }
+    }
+
+    @keyframes titleNextFlip {
+      0% {
+        transform: translate3d(0, -8%, 0) scale3d(1, 0, 1);
+        opacity: 0;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes cornerLogoFade {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    @keyframes finalFade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes finalScreenReveal {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes finalScreenLogo {
+      from {
+        transform: translate3d(-50%, 18px, 0);
+        opacity: 0;
+      }
+      to {
+        transform: translate3d(-50%, 0, 0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes finalScreenText {
+      from {
+        transform: translate3d(-50%, 10px, 0);
+        opacity: 0;
+      }
+      to {
+        transform: translate3d(-50%, 0, 0);
+        opacity: 0.7;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <a class="banner" id="button1" href="%banner.reference_mrc_user1%" target="%banner.target%" aria-label="banner">
+    <img class="layer bg" src="bg.png" alt="" />
+    <img class="layer flamingo" src="flamingo.png" alt="" />
+    <img class="layer corner-logo" src="logo.png" alt="" aria-hidden="true" />
+    <div class="layer bottom-fade" aria-hidden="true"></div>
+    <div class="bottom-panel-glow" aria-hidden="true"></div>
+    <div class="offer-card">
+      <div class="offer-card-inner">
+        <div class="offer-title" aria-label="headline animation">
+          <span class="title-row row-1">
+            <span class="title-face current">
+              <img src="headline-current-top-ru.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="title-face next">
+              <img src="headline-next-top-ru.svg" alt="" aria-hidden="true" />
+            </span>
+          </span>
+          <span class="title-row row-2">
+            <span class="title-face current is-friends-t2">
+              <img src="headline-current-bottom-ru.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="title-face next">
+              <img src="headline-next-bottom-ru.svg" alt="" aria-hidden="true" />
+            </span>
+          </span>
+        </div>
+        <div class="offer-bottom">
+          <img class="t2-logo" data-gif-src="logotype.gif" data-gif-delay="2840" alt="" aria-hidden="true" />
+        </div>
+      </div>
+    </div>
+    <div class="cta-button">
+      <span class="cta-button-content">
+        <img src="cta-more-ru.svg" alt="РџРѕРґСЂРѕР±РЅРµРµ" />
+      </span>
+    </div>
+    <div class="disclaimer">Реклама. Рекламодатель: ООО «Т2 Мобайл», ИНН: 7743895280</div>
+    <div class="layer final-fade" aria-hidden="true"></div>
+      <div class="layer final-screen" aria-hidden="true">
+        <img class="layer final-screen-logo" data-gif-src="logotype.gif" data-gif-delay="9600" alt="" aria-hidden="true" />
+      <div class="layer final-screen-copy">Реклама. Рекламодатель: ООО «Т2 Мобайл», Россия, 108811, г. Москва, п. Московский, Киевское&nbsp;шоссе, 22-й километр, д. 6, стр. 1, ОГРН: 1137746610088, ИНН: 7743895280, t2.ru | 0+<br />Подробнее о реферальной программе на t2.ru</div>
+    </div>
+  </a>
+
+  <script>
+    (function () {
+      var button = document.getElementById('button1');
+      var titleTrigger = document.querySelector('.title-row.row-1 .title-face.current');
+      var gifPlayers = document.querySelectorAll('[data-gif-src]');
+      var adStarted = false;
+      var GIF_START_ADVANCE_MS = 180;
+
+      if (!button) {
+        return;
+      }
+
+      function getClickTag() {
+        if (typeof window.clickTag === 'string' && window.clickTag) return window.clickTag;
+        var params = new URLSearchParams(window.location.search);
+        return params.get('clickTag') || params.get('clickTAG') || '';
+      }
+
+      function hasEB() {
+        return Boolean(
+          window.EB &&
+          window.EBG &&
+          window.EBG.EventName &&
+          window.EBG.EventName.EB_INITIALIZED &&
+          typeof window.EB.isInitialized === 'function' &&
+          typeof window.EB.clickthrough === 'function'
+        );
+      }
+
+      function clickthrough1(event) {
+        if (hasEB()) {
+          event.preventDefault();
+          window.EB.clickthrough();
+          return;
+        }
+
+        var href = button.getAttribute('href') || '';
+        if (!href || href.indexOf('%banner.') === 0) {
+          event.preventDefault();
+        }
+      }
+
+      function startAd() {
+        var currentHref;
+        var clickTag;
+
+        if (adStarted) {
+          return;
+        }
+
+        adStarted = true;
+        currentHref = button.getAttribute('href') || '';
+        clickTag = getClickTag();
+
+        if (clickTag && (!currentHref || currentHref.indexOf('%banner.') === 0)) {
+          button.setAttribute('href', clickTag);
+          button.setAttribute('target', '_blank');
+          button.setAttribute('rel', 'noopener');
+        }
+
+        button.addEventListener('click', clickthrough1);
+      }
+
+      function startGif(player) {
+        var src = player.getAttribute('data-gif-src');
+        var separator;
+
+        if (!src || player.getAttribute('data-gif-started') === 'true') {
+          return;
+        }
+
+        separator = src.indexOf('?') === -1 ? '?' : '&';
+        player.setAttribute('src', src + separator + 'play=' + Date.now());
+        player.setAttribute('data-gif-started', 'true');
+      }
+
+      function getFirstAnimationDelayMs(element) {
+        var animationDelay;
+        var firstDelay;
+        var value;
+
+        if (!element) {
+          return null;
+        }
+
+        animationDelay = window.getComputedStyle(element).animationDelay || '';
+        firstDelay = animationDelay.split(',')[0];
+
+        if (!firstDelay) {
+          return null;
+        }
+
+        value = firstDelay.trim();
+
+        if (value.slice(-2) === 'ms') {
+          return Number(value.slice(0, -2));
+        }
+
+        if (value.slice(-1) === 's') {
+          return Number(value.slice(0, -1)) * 1000;
+        }
+
+        return null;
+      }
+
+      function initGifPlayers() {
+        var titleStartDelay;
+
+        if (!gifPlayers.length) {
+          return;
+        }
+
+        titleStartDelay = getFirstAnimationDelayMs(titleTrigger);
+
+        gifPlayers.forEach(function (player) {
+          var trigger = player.getAttribute('data-gif-trigger');
+          var delay = Number(player.getAttribute('data-gif-delay')) || 0;
+
+          if (trigger === 'title-start') {
+            return;
+          }
+
+          window.setTimeout(function () {
+            startGif(player);
+          }, Math.max(delay - GIF_START_ADVANCE_MS, 0));
+        });
+
+        if (titleTrigger) {
+          if (titleStartDelay !== null) {
+            window.setTimeout(function () {
+              gifPlayers.forEach(function (player) {
+                if (player.getAttribute('data-gif-trigger') === 'title-start') {
+                  startGif(player);
+                }
+              });
+            }, Math.max(titleStartDelay - GIF_START_ADVANCE_MS, 0));
+          } else {
+            titleTrigger.addEventListener('animationstart', function (event) {
+              if (event.animationName === 'titleCurrentEnter') {
+                gifPlayers.forEach(function (player) {
+                  if (player.getAttribute('data-gif-trigger') === 'title-start') {
+                    startGif(player);
+                  }
+                });
+              }
+            }, { once: true });
+          }
+        }
+      }
+
+      function initEB() {
+        initGifPlayers();
+
+        if (hasEB()) {
+          if (!window.EB.isInitialized()) {
+            window.EB.addEventListener(window.EBG.EventName.EB_INITIALIZED, startAd);
+          } else {
+            startAd();
+          }
+          return;
+        }
+
+        startAd();
+      }
+
+      window.addEventListener('load', initEB);
+    })();
+  </script>
+</body>
+</html>
